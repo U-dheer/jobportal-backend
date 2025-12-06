@@ -13,7 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/job-portal'),
+    MongooseModule.forRoot('mongodb+srv://nalin2:XVQcShoO6CQQaSpy@goveecare.ehyrjbi.mongodb.net/?appName=goveEcare'),
     AuthModule,
     UsersModule,
     JobsModule,

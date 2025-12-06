@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Param,
     Post,
@@ -31,5 +32,11 @@ export class MessagesController {
     @Get('conversation/:userId')
     async getConversation(@Request() req, @Param('userId') userId: string) {
         return this.messagesService.getConversation(req.user.sub, userId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete(':messageId')
+    async deleteMessage(@Request() req, @Param('messageId') messageId: string) {
+        return this.messagesService.deleteMessage(messageId, req.user.sub);
     }
 }

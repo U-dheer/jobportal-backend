@@ -1,10 +1,6 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { ApplicationStatus } from '../application.schema';
+import { IsOptional, IsString } from 'class-validator';
 
 export class CreateApplicationDto {
-    @IsEnum(ApplicationStatus)
-    status: ApplicationStatus;
-
     @IsOptional()
     @IsString()
     resumeUrl?: string;
@@ -12,12 +8,4 @@ export class CreateApplicationDto {
     @IsOptional()
     @IsString()
     coverLetter?: string;
-
-    @IsNotEmpty()
-    @IsString()
-    jobId: string;
-
-    @IsNotEmpty()
-    @IsString()
-    jobSeekerId: string;
 } 

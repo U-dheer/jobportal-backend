@@ -36,4 +36,25 @@ export class ApplicationsService {
             .populate('jobSeekerId', 'name email')
             .exec();
     }
+
+    async deleteApplication(applicationId: string) {
+        const application = await this.applicationModel.findByIdAndDelete(applicationId);
+        if (!application) {
+            throw new NotFoundException('Application not found');
+        }
+        return { message: 'Application deleted successfully' };
+    }
+
+    async updateApplicationStatus(applicationId: string, status: string) {
+        const application = await this.applicationModel.findByIdAndUpdate(
+            applicationId,
+            { status },
+            { new: true }
+        ).populate('jobSeekerId', 'name email');
+        
+        if (!application) {
+            throw new NotFoundException('Application not found');
+        }
+        return application;
+    }
 }

@@ -96,3 +96,30 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## CI / CD
+
+This repository includes a GitHub Actions workflow at `.github/workflows/ci-cd.yml` that:
+
+- Runs lint, unit tests and builds the project on push and pull requests to `main`.
+- On pushes to `main`, builds a Docker image and pushes it to Docker Hub.
+- Optionally SSH-deploys the image to a remote server (if SSH secrets provided).
+
+Required GitHub Secrets (set in your repository Settings → Secrets):
+
+- `DOCKERHUB_USERNAME` — your Docker Hub username.
+- `DOCKERHUB_TOKEN` — a Docker Hub access token (or password).
+
+Optional Secrets for remote deploy:
+
+- `SSH_HOST` — remote host/IP for deployment.
+- `SSH_USER` — user to SSH as.
+- `SSH_PRIVATE_KEY` — private key (PEM) for SSH authentication.
+- `SSH_PORT` — optional SSH port (default 22).
+
+Usage notes:
+
+- The workflow tags images as `${{ secrets.DOCKERHUB_USERNAME }}/jobportal-backend:latest` and by commit SHA.
+- On the remote host the workflow will run `docker pull` and restart a container named `jobportal-backend` exposing port `3000`.
+- Adjust the `docker run` command in `.github/workflows/ci-cd.yml` to add volumes, env vars or other runtime flags as needed.
+

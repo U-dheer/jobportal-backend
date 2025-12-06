@@ -4,6 +4,8 @@ import {
     Get,
     Param,
     Post,
+    Delete,
+    Patch,
     UseGuards,
     Request,
 } from '@nestjs/common';
@@ -45,5 +47,22 @@ export class ApplicationsController {
     @Get('job/:jobId')
     async applicationsForJob(@Param('jobId') jobId: string) {
         return this.applicationsService.findByJob(jobId);
+    }
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('Employer')
+    @Delete(':applicationId')
+    async deleteApplication(@Param('applicationId') applicationId: string) {
+        return this.applicationsService.deleteApplication(applicationId);
+    }
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('Employer')
+    @Patch(':applicationId/status')
+    async updateApplicationStatus(
+        @Param('applicationId') applicationId: string,
+        @Body() body: { status: string }
+    ) {
+        return this.applicationsService.updateApplicationStatus(applicationId, body.status);
     }
 }

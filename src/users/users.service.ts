@@ -19,6 +19,12 @@ export class UsersService {
         return user;
     }
 
+    async getUserProfile(userId: string) {
+        const user = await this.userModel.findById(userId).select('-password');
+        if (!user) throw new NotFoundException('User not found');
+        return user;
+    }
+
     async updateProfile(userId: string, updateUserDto: UpdateUserDto) {
         const update: any = {};
         if (updateUserDto.email) update.email = updateUserDto.email;

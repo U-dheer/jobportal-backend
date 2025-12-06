@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, UseGuards, Request, UseInterceptors, UploadedFile, Post } from '@nestjs/common';
+import { Body, Controller, Get, Patch, UseGuards, Request, UseInterceptors, UploadedFile, Post, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -37,5 +37,11 @@ export class UsersController {
     }))
     async uploadResume(@Request() req, @UploadedFile() file: Express.Multer.File) {
         return this.usersService.saveResume(req.user.sub, file);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':userId')
+    async getUserProfile(@Param('userId') userId: string) {
+        return this.usersService.getUserProfile(userId);
     }
 }

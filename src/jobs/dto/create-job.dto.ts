@@ -17,7 +17,7 @@ export class CreateJobDto {
     @IsString()
     location?: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
-    employerId: string;
+    employerId?: string;
 } 

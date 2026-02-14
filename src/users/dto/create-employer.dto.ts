@@ -8,4 +8,4 @@ export class CreateEmployerDto {
     @IsOptional()
     @IsString()
     contactInfo?: string;
-} 
+}

@@ -1,30 +1,36 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ApiProperty } from '@nestjs/swagger';
 import { Document, Types } from 'mongoose';
 
 export type ApplicationDocument = Application & Document;
 
 export enum ApplicationStatus {
-    Applied = 'Applied',
-    Viewed = 'Viewed',
-    Rejected = 'Rejected',
+  Applied = 'Applied',
+  Viewed = 'Viewed',
+  Rejected = 'Rejected',
 }
 
 @Schema({ timestamps: true })
 export class Application {
-    @Prop({ required: true, enum: ApplicationStatus })
-    status: ApplicationStatus;
+  @ApiProperty({ enum: ApplicationStatus, example: ApplicationStatus.Applied })
+  @Prop({ required: true, enum: ApplicationStatus })
+  status: ApplicationStatus;
 
-    @Prop()
-    resumeUrl: string;
+  @ApiProperty({ example: 'https://cloudinary.com/resume.pdf' })
+  @Prop()
+  resumeUrl: string;
 
-    @Prop()
-    coverLetter: string;
+  @ApiProperty({ example: 'I am highly motivated...' })
+  @Prop()
+  coverLetter: string;
 
-    @Prop({ type: Types.ObjectId, ref: 'Job', required: true })
-    jobId: Types.ObjectId;
+  @ApiProperty({ type: String, example: '65c123abc...' })
+  @Prop({ type: Types.ObjectId, ref: 'Job', required: true })
+  jobId: Types.ObjectId;
 
-    @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-    jobSeekerId: Types.ObjectId;
+  @ApiProperty({ type: String, example: '65d456def...' })
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  jobSeekerId: Types.ObjectId;
 }
 
-export const ApplicationSchema = SchemaFactory.createForClass(Application); 
+export const ApplicationSchema = SchemaFactory.createForClass(Application);

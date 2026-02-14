@@ -16,14 +16,14 @@ export class AdminService {
             console.log('Fetching all users...');
             const users = await this.userModel.find({}, { password: 0 }).exec();
             console.log('Found users:', users.length);
-            
+
             const mappedUsers = users.map(user => {
                 // Handle companyName for employers
                 let displayName = user.name;
                 if (user.role === 'Employer' && (user as any).companyName) {
                     displayName = (user as any).companyName;
                 }
-                
+
                 return {
                     _id: user._id,
                     name: displayName || 'Unknown',
@@ -36,7 +36,7 @@ export class AdminService {
                     updatedAt: (user as any).updatedAt
                 };
             });
-            
+
             console.log('Mapped users:', mappedUsers);
             return mappedUsers;
         } catch (error) {
@@ -84,20 +84,20 @@ export class AdminService {
     async usageReport() {
         try {
             console.log('Generating usage report...');
-            
+
             const totalUsers = await this.userModel.countDocuments();
             const totalJobs = await this.jobModel.countDocuments();
-            
+
             // Get actual user statistics
             const activeUsers = await this.userModel.countDocuments({ isActive: true });
             const suspendedUsers = await this.userModel.countDocuments({ isActive: false });
             const jobSeekers = await this.userModel.countDocuments({ role: 'JobSeeker' });
             const employers = await this.userModel.countDocuments({ role: 'Employer' });
-            
+
             // Mock data for demo purposes - in production, these would come from actual system metrics
             const totalApplications = Math.floor(totalJobs * 2.5); // Mock: average 2.5 applications per job
             const totalMessages = Math.floor(totalUsers * 1.2); // Mock: average 1.2 messages per user
-            
+
             // Mock system stats
             const systemStats = {
                 uptime: `${Math.floor(Math.random() * 24)}h ${Math.floor(Math.random() * 60)}m`,
@@ -116,7 +116,7 @@ export class AdminService {
                 employers,
                 systemStats
             };
-            
+
             console.log('Generated report:', report);
             return report;
         } catch (error) {

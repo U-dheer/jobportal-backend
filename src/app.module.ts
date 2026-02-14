@@ -13,7 +13,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://nalin2:XVQcShoO6CQQaSpy@goveecare.ehyrjbi.mongodb.net/?appName=goveEcare'),
+    MongooseModule.forRootAsync({
+      useFactory: () => ({
+        uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/jobportal',
+      }),
+    }),
     AuthModule,
     UsersModule,
     JobsModule,
@@ -21,9 +25,9 @@ import { MongooseModule } from '@nestjs/mongoose';
     MessagesModule,
     AdminModule,
     CommonModule,
-    CloudinaryModule
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

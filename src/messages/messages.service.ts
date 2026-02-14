@@ -34,11 +34,11 @@ export class MessagesService {
             _id: messageId,
             receiverId: userId // Only allow deletion of messages received by the user
         });
-        
+
         if (!message) {
             throw new NotFoundException('Message not found or you do not have permission to delete it');
         }
-        
+
         return { message: 'Message deleted successfully' };
     }
 }

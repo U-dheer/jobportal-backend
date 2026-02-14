@@ -8,4 +8,4 @@ export class Employer extends User {
 
     @Prop()
     contactInfo: string;
-} 
+}

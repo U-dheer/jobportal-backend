@@ -44,7 +44,7 @@ export class JobsService {
         if (!job) {
             throw new NotFoundException('Job not found');
         }
-        
+
         if (job.employerId.toString() !== employerId) {
             throw new ForbiddenException('You can only update your own jobs');
         }
@@ -62,7 +62,7 @@ export class JobsService {
         if (!job) {
             throw new NotFoundException('Job not found');
         }
-        
+
         if (job.employerId.toString() !== employerId) {
             throw new ForbiddenException('You can only delete your own jobs');
         }

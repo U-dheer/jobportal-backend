@@ -1,0 +1,1576 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "API Welcome Message",
+        "tags": [
+          "General"
+        ]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "description": "Register a new user (JobSeeker, Employer, or Admin)",
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "User registration data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              },
+              "examples": {
+                "jobseeker": {
+                  "summary": "JobSeeker Registration",
+                  "value": {
+                    "email": "john.doe@example.com",
+                    "password": "SecurePass123!",
+                    "role": "JobSeeker",
+                    "name": "John Doe",
+                    "address": "123 Main St, New York, NY 10001",
+                    "telephone": "+1-555-123-4567"
+                  }
+                },
+                "employer": {
+                  "summary": "Employer Registration",
+                  "value": {
+                    "email": "hr@techcorp.com",
+                    "password": "SecurePass123!",
+                    "role": "Employer",
+                    "name": "Jane Smith",
+                    "address": "456 Business Ave, San Francisco, CA 94105",
+                    "telephone": "+1-555-987-6543"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Registration successful"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "409": {
+            "description": "Email already registered"
+          }
+        },
+        "summary": "User Registration",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "description": "Login with email and password to get JWT token",
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful - JWT token provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "user": {
+                      "id": "507f1f77bcf86cd799439011",
+                      "email": "user@example.com",
+                      "role": "JobSeeker"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        },
+        "summary": "User Login",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/users/me": {
+      "get": {
+        "description": "Retrieve the profile of the authenticated user",
+        "operationId": "UsersController_getProfile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get Current User Profile",
+        "tags": [
+          "Users"
+        ]
+      },
+      "patch": {
+        "description": "Update the authenticated user's profile information",
+        "operationId": "UsersController_updateProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              },
+              "examples": {
+                "updateEmail": {
+                  "summary": "Update Email",
+                  "value": {
+                    "email": "newemail@example.com"
+                  }
+                },
+                "updatePassword": {
+                  "summary": "Update Password",
+                  "value": {
+                    "password": "NewSecurePass123!"
+                  }
+                },
+                "updateProfile": {
+                  "summary": "Update Full Profile",
+                  "value": {
+                    "name": "John Updated",
+                    "email": "john.updated@example.com",
+                    "address": "789 New Street, Boston, MA 02101",
+                    "telephone": "+1-555-999-8888"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "409": {
+            "description": "Email already in use"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Update User Profile",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/me/upload-resume": {
+      "post": {
+        "description": "Upload a resume file to the user profile (max 5MB)",
+        "operationId": "UsersController_uploadResume",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Resume uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Resume uploaded successfully",
+                    "resumeUrl": "https://cloudinary.com/..."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid file format or size"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Upload Resume",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "description": "Retrieve a user profile by their ID",
+        "operationId": "UsersController_getUserProfile",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User ID (MongoDB ObjectId)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile retrieved"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get User Profile by ID",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/jobs": {
+      "post": {
+        "description": "Create a new job posting (Employer only)",
+        "operationId": "JobsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJobDto"
+              },
+              "examples": {
+                "softwareEngineer": {
+                  "summary": "Software Engineer Position",
+                  "value": {
+                    "title": "Senior Software Engineer",
+                    "description": "We are seeking an experienced Software Engineer with 5+ years of experience in React and Node.js to join our team.",
+                    "salary": 150000,
+                    "location": "San Francisco, CA"
+                  }
+                },
+                "productManager": {
+                  "summary": "Product Manager Position",
+                  "value": {
+                    "title": "Product Manager",
+                    "description": "Looking for a strategic Product Manager to lead our mobile app initiative and drive product roadmap.",
+                    "salary": 140000,
+                    "location": "New York, NY"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Job created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Only Employers can create jobs"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Create Job Posting",
+        "tags": [
+          "Jobs"
+        ]
+      },
+      "get": {
+        "description": "Get a list of all jobs with optional filtering by title and location",
+        "operationId": "JobsController_findAll",
+        "parameters": [
+          {
+            "name": "location",
+            "required": false,
+            "in": "query",
+            "description": "Filter by job location",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "title",
+            "required": false,
+            "in": "query",
+            "description": "Filter by job title",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jobs retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Job"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "List All Jobs",
+        "tags": [
+          "Jobs"
+        ]
+      }
+    },
+    "/jobs/my": {
+      "get": {
+        "description": "Get all jobs posted by the authenticated employer",
+        "operationId": "JobsController_findMyJobs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Jobs retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Job"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Only Employers can access"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get My Jobs",
+        "tags": [
+          "Jobs"
+        ]
+      }
+    },
+    "/jobs/{id}": {
+      "get": {
+        "description": "Retrieve details of a specific job",
+        "operationId": "JobsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Job ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job retrieved successfully"
+          },
+          "404": {
+            "description": "Job not found"
+          }
+        },
+        "summary": "Get Job Details",
+        "tags": [
+          "Jobs"
+        ]
+      }
+    },
+    "/jobs/{jobId}": {
+      "patch": {
+        "description": "Update a job posting (Employer only)",
+        "operationId": "JobsController_updateJob",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "description": "Job ID to update",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateJobDto"
+              },
+              "examples": {
+                "partialUpdate": {
+                  "summary": "Update Salary Only",
+                  "value": {
+                    "salary": 160000
+                  }
+                },
+                "fullUpdate": {
+                  "summary": "Update All Fields",
+                  "value": {
+                    "title": "Lead Software Engineer",
+                    "description": "Updated description with new requirements",
+                    "salary": 170000,
+                    "location": "San Francisco, CA"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Job updated successfully"
+          },
+          "403": {
+            "description": "Forbidden - Only job owner can update"
+          },
+          "404": {
+            "description": "Job not found"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Update Job Posting",
+        "tags": [
+          "Jobs"
+        ]
+      },
+      "delete": {
+        "description": "Delete a job posting (Employer only)",
+        "operationId": "JobsController_deleteJob",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "description": "Job ID to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job deleted successfully"
+          },
+          "403": {
+            "description": "Forbidden - Only job owner can delete"
+          },
+          "404": {
+            "description": "Job not found"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Delete Job Posting",
+        "tags": [
+          "Jobs"
+        ]
+      }
+    },
+    "/applications/{jobId}": {
+      "post": {
+        "description": "Submit a job application (JobSeeker only)",
+        "operationId": "ApplicationsController_apply",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "description": "Job ID to apply for",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApplicationDto"
+              },
+              "examples": {
+                "simpleApplication": {
+                  "summary": "Basic Application",
+                  "value": {
+                    "coverLetter": "I am very interested in this position."
+                  }
+                },
+                "fullApplication": {
+                  "summary": "Full Application with Resume",
+                  "value": {
+                    "resumeUrl": "https://cloudinary.com/...",
+                    "coverLetter": "Dear Hiring Manager, I am very interested in the Senior Software Engineer position. With 7 years of experience in React and Node.js, I am confident..."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Application submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Application"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Only JobSeekers can apply"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Apply for Job",
+        "tags": [
+          "Applications"
+        ]
+      }
+    },
+    "/applications/me": {
+      "get": {
+        "description": "Retrieve all applications submitted by the authenticated user",
+        "operationId": "ApplicationsController_myApplications",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Applications retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Application"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get My Applications",
+        "tags": [
+          "Applications"
+        ]
+      }
+    },
+    "/applications/my-jobs": {
+      "get": {
+        "description": "Get all jobs the authenticated JobSeeker has applied to",
+        "operationId": "ApplicationsController_myAppliedJobs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Jobs retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Application"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Only JobSeekers can access"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get My Applied Jobs",
+        "tags": [
+          "Applications"
+        ]
+      }
+    },
+    "/applications/job/{jobId}": {
+      "get": {
+        "description": "Get all applications for a specific job",
+        "operationId": "ApplicationsController_applicationsForJob",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "description": "Job ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Applications retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Application"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get Job Applications",
+        "tags": [
+          "Applications"
+        ]
+      }
+    },
+    "/applications/{applicationId}": {
+      "delete": {
+        "description": "Delete an application (Employer only)",
+        "operationId": "ApplicationsController_deleteApplication",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "required": true,
+            "in": "path",
+            "description": "Application ID to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application deleted successfully"
+          },
+          "404": {
+            "description": "Application not found"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Delete Application",
+        "tags": [
+          "Applications"
+        ]
+      }
+    },
+    "/applications/{applicationId}/status": {
+      "patch": {
+        "description": "Update the status of an application (Employer only)",
+        "operationId": "ApplicationsController_updateApplicationStatus",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "required": true,
+            "in": "path",
+            "description": "Application ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "Applied",
+                      "Viewed",
+                      "Rejected"
+                    ]
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              },
+              "examples": {
+                "viewed": {
+                  "summary": "Mark as Viewed",
+                  "value": {
+                    "status": "Viewed"
+                  }
+                },
+                "rejected": {
+                  "summary": "Reject Application",
+                  "value": {
+                    "status": "Rejected"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Application status updated"
+          },
+          "404": {
+            "description": "Application not found"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Update Application Status",
+        "tags": [
+          "Applications"
+        ]
+      }
+    },
+    "/messages/{receiverId}": {
+      "post": {
+        "description": "Send a message to another user",
+        "operationId": "MessagesController_send",
+        "parameters": [
+          {
+            "name": "receiverId",
+            "required": true,
+            "in": "path",
+            "description": "Recipient User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMessageDto"
+              },
+              "examples": {
+                "shortMessage": {
+                  "summary": "Short Message",
+                  "value": {
+                    "content": "Hi, I am interested in the job posting."
+                  }
+                },
+                "longMessage": {
+                  "summary": "Long Message",
+                  "value": {
+                    "content": "Hello, I am very interested in your job posting for a Senior Software Engineer position. I have 7 years of experience..."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Message sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Recipient not found"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Send Message",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/messages/inbox": {
+      "get": {
+        "description": "Retrieve all messages received by the authenticated user",
+        "operationId": "MessagesController_inbox",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Messages retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get Inbox",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/messages/conversation/{userId}": {
+      "get": {
+        "description": "Get conversation history with a specific user",
+        "operationId": "MessagesController_getConversation",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "Other User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversation retrieved successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get Conversation",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/messages/{messageId}": {
+      "delete": {
+        "description": "Delete a message from your inbox",
+        "operationId": "MessagesController_deleteMessage",
+        "parameters": [
+          {
+            "name": "messageId",
+            "required": true,
+            "in": "path",
+            "description": "Message ID to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Message deleted successfully"
+          },
+          "404": {
+            "description": "Message not found"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Delete Message",
+        "tags": [
+          "Messages"
+        ]
+      }
+    },
+    "/admin/health": {
+      "get": {
+        "description": "Check if the admin module is operational",
+        "operationId": "AdminController_healthCheck",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Admin module is working",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "status": "Admin module is working",
+                    "timestamp": "2024-02-14T12:00:00.000Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Health Check",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/users": {
+      "get": {
+        "description": "Retrieve a list of all users in the system (Admin only)",
+        "operationId": "AdminController_getAllUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Users retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get All Users",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/suspend/{userId}": {
+      "patch": {
+        "description": "Suspend a user account (Admin only)",
+        "operationId": "AdminController_suspendUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User ID to suspend",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User suspended successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Suspend User",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/activate/{userId}": {
+      "patch": {
+        "description": "Activate a suspended user account (Admin only)",
+        "operationId": "AdminController_activateUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User ID to activate",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User activated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Activate User",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/delete/{userId}": {
+      "delete": {
+        "description": "Permanently delete a user account (Admin only)",
+        "operationId": "AdminController_deleteUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User ID to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Delete User",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/report": {
+      "get": {
+        "description": "Get system usage statistics and analytics (Admin only)",
+        "operationId": "AdminController_usageReport",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Report retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "totalUsers": 150,
+                    "totalJobs": 45,
+                    "totalApplications": 320,
+                    "totalMessages": 1200,
+                    "activeUsers": 140,
+                    "suspendedUsers": 10,
+                    "jobSeekers": 100,
+                    "employers": 45,
+                    "systemStats": {
+                      "uptime": "5h 30m",
+                      "memoryUsage": "45%",
+                      "cpuUsage": "25%"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get Usage Report",
+        "tags": [
+          "Admin"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Job Portal API",
+    "description": "A comprehensive API for managing jobs, applications, users, and messaging. Supports multiple user roles: JobSeeker, Employer, and Admin.",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": ""
+    },
+    {
+      "name": "Users",
+      "description": ""
+    },
+    {
+      "name": "Jobs",
+      "description": ""
+    },
+    {
+      "name": "Applications",
+      "description": ""
+    },
+    {
+      "name": "Messages",
+      "description": ""
+    },
+    {
+      "name": "Admin",
+      "description": ""
+    }
+  ],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "access-token": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "description": "Enter JWT token",
+        "name": "Authorization",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123",
+            "minLength": 6
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "JobSeeker",
+              "Employer",
+              "Admin"
+            ],
+            "example": "JobSeeker"
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Main St, New York, NY"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "role",
+          "name",
+          "address"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "JobSeeker",
+              "Employer",
+              "Admin"
+            ]
+          },
+          "resumeUrl": {
+            "type": "string",
+            "example": "https://cloudinary.com/resume.pdf"
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Main St, New York, NY"
+          },
+          "telephone": {
+            "type": "string",
+            "example": "+1-555-0199"
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "email",
+          "role",
+          "name",
+          "address",
+          "telephone",
+          "isActive"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "newemail@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "newpassword123",
+            "minLength": 6
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "JobSeeker",
+              "Employer",
+              "Admin"
+            ]
+          }
+        }
+      },
+      "CreateJobDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Senior Software Engineer"
+          },
+          "description": {
+            "type": "string",
+            "example": "We are looking for a Node.js expert..."
+          },
+          "salary": {
+            "type": "number",
+            "example": 120000
+          },
+          "location": {
+            "type": "string",
+            "example": "Remote"
+          }
+        },
+        "required": [
+          "title",
+          "description"
+        ]
+      },
+      "Job": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Software Engineer"
+          },
+          "description": {
+            "type": "string",
+            "example": "Job description here..."
+          },
+          "salary": {
+            "type": "number",
+            "example": 120000
+          },
+          "location": {
+            "type": "string",
+            "example": "Remote / New York"
+          },
+          "employerId": {
+            "type": "string",
+            "example": "65c123abc..."
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "salary",
+          "location",
+          "employerId"
+        ]
+      },
+      "UpdateJobDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateApplicationDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "Application": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "Applied",
+              "Viewed",
+              "Rejected"
+            ],
+            "example": "Applied"
+          },
+          "resumeUrl": {
+            "type": "string",
+            "example": "https://cloudinary.com/resume.pdf"
+          },
+          "coverLetter": {
+            "type": "string",
+            "example": "I am highly motivated..."
+          },
+          "jobId": {
+            "type": "string",
+            "example": "65c123abc..."
+          },
+          "jobSeekerId": {
+            "type": "string",
+            "example": "65d456def..."
+          }
+        },
+        "required": [
+          "status",
+          "resumeUrl",
+          "coverLetter",
+          "jobId",
+          "jobSeekerId"
+        ]
+      },
+      "CreateMessageDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "senderId": {
+            "type": "string",
+            "example": "65c111aaa..."
+          },
+          "receiverId": {
+            "type": "string",
+            "example": "65c222bbb..."
+          },
+          "content": {
+            "type": "string",
+            "example": "Hello, how are you?"
+          }
+        },
+        "required": [
+          "senderId",
+          "receiverId",
+          "content"
+        ]
+      }
+    }
+  }
+}

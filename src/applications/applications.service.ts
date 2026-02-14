@@ -51,7 +51,7 @@ export class ApplicationsService {
             { status },
             { new: true }
         ).populate('jobSeekerId', 'name email');
-        
+
         if (!application) {
             throw new NotFoundException('Application not found');
         }

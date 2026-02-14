@@ -1,0 +1,54 @@
+---
+title: Authentication Guide
+---
+
+The Job Portal API uses JSON Web Tokens (JWT) for authentication. Most endpoints require a valid token to be provided in the request header.
+
+## How to Authenticate
+
+### 1. Register or Login
+
+First, you need to obtain a token by logging in. If you don't have an account, you can register one first.
+
+**Login Request:**
+
+```http
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "yourpassword"
+}
+```
+
+**Response:**
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "...",
+    "email": "user@example.com",
+    "role": "JobSeeker"
+  }
+}
+```
+
+### 2. Use the Token
+
+Once you have the `access_token`, you must include it in all subsequent requests that require authentication.
+
+**Header Format:**
+
+`Authorization: Bearer <your_access_token>`
+
+## Role-Based Access Control
+
+The API supports three roles:
+
+1. **JobSeeker**: Can browse jobs, apply to jobs, and manage their profile.
+2. **Employer**: Can post jobs, manage applications for their jobs, and update company info.
+3. **Admin**: Has full access to the system, including user management and reports.
+
+Each endpoint may have specific role requirements, which are detailed in the [API Reference](/api).

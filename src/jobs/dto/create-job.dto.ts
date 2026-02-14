@@ -1,23 +1,24 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateJobDto {
-    @IsNotEmpty()
-    @IsString()
-    title: string;
+  @ApiProperty({ example: 'Senior Software Engineer' })
+  @IsNotEmpty()
+  @IsString()
+  title: string;
 
-    @IsNotEmpty()
-    @IsString()
-    description: string;
+  @ApiProperty({ example: 'We are looking for a Node.js expert...' })
+  @IsNotEmpty()
+  @IsString()
+  description: string;
 
-    @IsOptional()
-    @IsNumber()
-    salary?: number;
+  @ApiProperty({ example: 120000, required: false })
+  @IsOptional()
+  @IsNumber()
+  salary?: number;
 
-    @IsOptional()
-    @IsString()
-    location?: string;
-
-    @IsOptional()
-    @IsString()
-    employerId?: string;
-} 
+  @ApiProperty({ example: 'Remote', required: false })
+  @IsOptional()
+  @IsString()
+  location?: string;
+}

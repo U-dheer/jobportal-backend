@@ -11,4 +11,4 @@ export class JobSeeker extends User {
 
     @Prop([String])
     experience: string[];
-} 
+}

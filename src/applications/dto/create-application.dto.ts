@@ -8,4 +8,4 @@ export class CreateApplicationDto {
     @IsOptional()
     @IsString()
     coverLetter?: string;
-} 
+}
